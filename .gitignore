@@ -1,0 +1,16 @@
+# IDE
+.vscode/
+.idea/
+.gitignore
+
+# Compiled classes
+*.class
+*.jar
+
+# Build directories
+/target/
+/bin/
+/build/
+
+# Logs
+*.log
