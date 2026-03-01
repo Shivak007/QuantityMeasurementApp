@@ -2,6 +2,9 @@
 .vscode/
 .idea/
 .gitignore
+QuantityMeasurementApp.iml
+main.iml
+test.iml
 
 # Compiled classes
 *.class
