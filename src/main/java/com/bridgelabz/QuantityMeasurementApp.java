@@ -1,33 +1,46 @@
 package com.bridgelabz;
 
 public class QuantityMeasurementApp {
-    // Static Equality Methods
-    public static boolean checkFeetEquality(double value1, double value2) {
-        Feet f1 = new Feet(value1);
-        Feet f2 = new Feet(value2);
-        return f1.equals(f2);
-    }
+    // ENUM: LengthUnit
+    public enum LengthUnit {
 
-    public static boolean checkInchEquality(double value1, double value2) {
-        Inches i1 = new Inches(value1);
-        Inches i2 = new Inches(value2);
-        return i1.equals(i2);
-    }
+        FEET(1.0),
+        INCH(1.0 / 12.0);
 
-    // FEET CLASS
-    public static class Feet {
+        private final double toFeetFactor;
 
-        private final double value;
-
-        public Feet(double value) {
-            validateNumeric(value);
-            this.value = value;
+        LengthUnit(double toFeetFactor) {
+            this.toFeetFactor = toFeetFactor;
         }
 
-        private void validateNumeric(double value) {
+        public double toFeet(double value) {
+            return value * toFeetFactor;
+        }
+    }
+
+    // CLASS: QuantityLength
+    public static class QuantityLength {
+
+        private final double value;
+        private final LengthUnit unit;
+
+        public QuantityLength(double value, LengthUnit unit) {
+            validate(value, unit);
+            this.value = value;
+            this.unit = unit;
+        }
+
+        private void validate(double value, LengthUnit unit) {
             if (Double.isNaN(value) || Double.isInfinite(value)) {
-                throw new IllegalArgumentException("Invalid numeric value for Feet");
+                throw new IllegalArgumentException("Invalid numeric value");
             }
+            if (unit == null) {
+                throw new IllegalArgumentException("Unit cannot be null");
+            }
+        }
+
+        private double toBaseUnit() {
+            return unit.toFeet(value);
         }
 
         @Override
@@ -38,60 +51,27 @@ public class QuantityMeasurementApp {
             if (obj == null || getClass() != obj.getClass())
                 return false;
 
-            Feet other = (Feet) obj;
+            QuantityLength other = (QuantityLength) obj;
 
-            return Double.compare(this.value, other.value) == 0;
+            return Double.compare(this.toBaseUnit(),
+                    other.toBaseUnit()) == 0;
         }
 
         @Override
         public int hashCode() {
-            return Double.hashCode(value);
+            return Double.hashCode(toBaseUnit());
         }
     }
-
-    // INCHES CLASS
-    public static class Inches {
-
-        private final double value;
-
-        public Inches(double value) {
-            validateNumeric(value);
-            this.value = value;
-        }
-
-        private void validateNumeric(double value) {
-            if (Double.isNaN(value) || Double.isInfinite(value)) {
-                throw new IllegalArgumentException("Invalid numeric value for Inches");
-            }
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-
-            if (this == obj) return true;
-
-            if (obj == null || getClass() != obj.getClass())
-                return false;
-
-            Inches other = (Inches) obj;
-
-            return Double.compare(this.value, other.value) == 0;
-        }
-
-        @Override
-        public int hashCode() {
-            return Double.hashCode(value);
-        }
-    }
-    // MAIN METHOD
+    // MAIN
     public static void main(String[] args) {
 
-        System.out.println("Input: 1.0 ft and 1.0 ft");
-        System.out.println("Output: Equal (" +
-                checkFeetEquality(1.0, 1.0) + ")");
+        QuantityLength oneFoot =
+                new QuantityLength(1.0, LengthUnit.FEET);
 
-        System.out.println("Input: 1.0 inch and 1.0 inch");
-        System.out.println("Output: Equal (" +
-                checkInchEquality(1.0, 1.0) + ")");
+        QuantityLength twelveInches =
+                new QuantityLength(12.0, LengthUnit.INCH);
+
+        System.out.println("Equal: " +
+                oneFoot.equals(twelveInches));
     }
 }
