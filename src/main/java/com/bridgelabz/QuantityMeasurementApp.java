@@ -1,11 +1,13 @@
 package com.bridgelabz;
 
 public class QuantityMeasurementApp {
-    // ENUM: LengthUnit
+    // ENUM: LengthUnit (Extended in UC4)
     public enum LengthUnit {
 
         FEET(1.0),
-        INCH(1.0 / 12.0);
+        INCH(1.0 / 12.0),
+        YARDS(3.0),
+        CENTIMETERS(0.393701 / 12.0);
 
         private final double toFeetFactor;
 
@@ -53,7 +55,8 @@ public class QuantityMeasurementApp {
 
             QuantityLength other = (QuantityLength) obj;
 
-            return Double.compare(this.toBaseUnit(),
+            return Double.compare(
+                    this.toBaseUnit(),
                     other.toBaseUnit()) == 0;
         }
 
@@ -61,17 +64,33 @@ public class QuantityMeasurementApp {
         public int hashCode() {
             return Double.hashCode(toBaseUnit());
         }
+
+        @Override
+        public String toString() {
+            return "Quantity(" + value + ", " + unit + ")";
+        }
     }
-    // MAIN
+
+    // MAIN DEMO
     public static void main(String[] args) {
 
-        QuantityLength oneFoot =
-                new QuantityLength(1.0, LengthUnit.FEET);
+        QuantityLength yard =
+                new QuantityLength(1.0, LengthUnit.YARDS);
 
-        QuantityLength twelveInches =
-                new QuantityLength(12.0, LengthUnit.INCH);
+        QuantityLength feet =
+                new QuantityLength(3.0, LengthUnit.FEET);
 
-        System.out.println("Equal: " +
-                oneFoot.equals(twelveInches));
+        QuantityLength inches =
+                new QuantityLength(36.0, LengthUnit.INCH);
+
+        QuantityLength cm =
+                new QuantityLength(1.0, LengthUnit.CENTIMETERS);
+
+        QuantityLength inchEquivalent =
+                new QuantityLength(0.393701, LengthUnit.INCH);
+
+        System.out.println("1 Yard == 3 Feet ? " + yard.equals(feet));
+        System.out.println("1 Yard == 36 Inches ? " + yard.equals(inches));
+        System.out.println("1 cm == 0.393701 inch ? " + cm.equals(inchEquivalent));
     }
 }
