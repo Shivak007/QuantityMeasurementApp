@@ -1,12 +1,23 @@
 package com.bridgelabz;
 
-public interface IMeasurable {
+@FunctionalInterface
+interface SupportsArithmetic {
+    boolean isSupported();
+}
 
-    double getConversionFactor();
+public interface IMeasurable {
 
     double convertToBaseUnit(double value);
 
     double convertFromBaseUnit(double baseValue);
 
-    String getUnitName();
+    SupportsArithmetic supportsArithmetic = () -> true;
+
+    default boolean supportsArithmetic() {
+        return supportsArithmetic.isSupported();
+    }
+
+    default void validateOperationSupport(String operation) {
+        // default: allow operations
+    }
 }
