@@ -68,6 +68,59 @@ public class Quantity<U extends IMeasurable> {
         return new Quantity<>(result, targetUnit);
     }
 
+    public Quantity<U> subtract(Quantity<U> other) {
+
+        if (other == null)
+            throw new IllegalArgumentException("Operand cannot be null");
+
+        return subtract(other, this.unit);
+    }
+
+    public Quantity<U> subtract(Quantity<U> other, U targetUnit) {
+
+        if (other == null)
+            throw new IllegalArgumentException("Operand cannot be null");
+
+        if (targetUnit == null)
+            throw new IllegalArgumentException("Target unit cannot be null");
+
+        if (this.unit.getClass() != other.unit.getClass())
+            throw new IllegalArgumentException("Cross-category subtraction not allowed");
+
+        double baseResult =
+                this.unit.convertToBaseUnit(value) -
+                        other.unit.convertToBaseUnit(other.value);
+
+        double converted =
+                targetUnit.convertFromBaseUnit(baseResult);
+
+        double rounded =
+                Math.round(converted * 100.0) / 100.0;
+
+        return new Quantity<>(rounded, targetUnit);
+    }
+
+    public double divide(Quantity<U> other) {
+
+        if (other == null)
+            throw new IllegalArgumentException("Operand cannot be null");
+
+        if (this.unit.getClass() != other.unit.getClass())
+            throw new IllegalArgumentException("Cross-category division not allowed");
+
+        double divisor =
+                other.unit.convertToBaseUnit(other.value);
+
+        if (divisor == 0)
+            throw new ArithmeticException("Division by zero");
+
+        double dividend =
+                this.unit.convertToBaseUnit(this.value);
+
+        return dividend / divisor;
+    }
+
+
     @Override
     public boolean equals(Object obj) {
 
@@ -85,6 +138,7 @@ public class Quantity<U extends IMeasurable> {
 
         return Math.abs(a - b) < 1e-5;
     }
+
 
     @Override
     public int hashCode() {

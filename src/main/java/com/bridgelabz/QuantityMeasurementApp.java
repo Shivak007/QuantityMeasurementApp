@@ -19,7 +19,6 @@ public class QuantityMeasurementApp {
                 length1.add(length2, LengthUnit.FEET));
 
 
-
         Quantity<WeightUnit> weight1 =
                 new Quantity<>(1.0, WeightUnit.KILOGRAM);
 
@@ -33,5 +32,15 @@ public class QuantityMeasurementApp {
 
         System.out.println(
                 weight1.add(weight2, WeightUnit.KILOGRAM));
+
+        Quantity<LengthUnit> a =
+                new Quantity<>(10.0, LengthUnit.FEET);
+
+        Quantity<LengthUnit> b =
+                new Quantity<>(6.0, LengthUnit.INCHES);
+
+        System.out.println(a.subtract(b));
+        System.out.println(a.subtract(b, LengthUnit.INCHES));
+        System.out.println(a.divide(b));
     }
 }
