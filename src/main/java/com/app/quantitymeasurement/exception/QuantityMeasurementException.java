@@ -2,7 +2,7 @@ package com.app.quantitymeasurement.exception;
 
 /**
  * QuantityMeasurementException - Base custom exception for all
- * application-level errors in the Quantity Measurement App.
+ * application-level errors. Preserved from UC16.
  */
 public class QuantityMeasurementException extends RuntimeException {
 

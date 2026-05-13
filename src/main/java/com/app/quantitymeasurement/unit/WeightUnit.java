@@ -3,6 +3,7 @@ package com.app.quantitymeasurement.unit;
 /**
  * WeightUnit - Enum representing supported weight units.
  * Base unit: GRAM
+ * Preserved unchanged from UC16.
  */
 public enum WeightUnit implements IMeasurable {
     GRAM(1.0, "GRAM"),
@@ -18,12 +19,8 @@ public enum WeightUnit implements IMeasurable {
     }
 
     @Override
-    public double getConversionFactor() {
-        return conversionFactor;
-    }
+    public double getConversionFactor() { return conversionFactor; }
 
     @Override
-    public String getBaseUnit() {
-        return baseUnit;
-    }
+    public String getBaseUnit() { return baseUnit; }
 }

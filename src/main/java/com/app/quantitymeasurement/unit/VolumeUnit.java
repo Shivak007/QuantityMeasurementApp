@@ -3,6 +3,7 @@ package com.app.quantitymeasurement.unit;
 /**
  * VolumeUnit - Enum representing supported volume units.
  * Base unit: LITRE
+ * Preserved unchanged from UC16.
  */
 public enum VolumeUnit implements IMeasurable {
     LITRE(1.0, "LITRE"),
@@ -18,12 +19,8 @@ public enum VolumeUnit implements IMeasurable {
     }
 
     @Override
-    public double getConversionFactor() {
-        return conversionFactor;
-    }
+    public double getConversionFactor() { return conversionFactor; }
 
     @Override
-    public String getBaseUnit() {
-        return baseUnit;
-    }
+    public String getBaseUnit() { return baseUnit; }
 }

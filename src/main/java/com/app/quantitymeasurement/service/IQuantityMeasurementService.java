@@ -1,60 +1,33 @@
 package com.app.quantitymeasurement.service;
 
-import com.app.quantitymeasurement.entity.QuantityDTO;
-import com.app.quantitymeasurement.entity.QuantityMeasurementEntity;
+import com.app.quantitymeasurement.model.QuantityInputDTO;
+import com.app.quantitymeasurement.model.QuantityMeasurementDTO;
 
 import java.util.List;
 
 /**
- * IQuantityMeasurementService - Service layer contract for all
- * quantity measurement operations.
+ * IQuantityMeasurementService - Service contract for UC17 Spring Boot migration.
+ * All operations return QuantityMeasurementDTO for full REST response support.
  */
 public interface IQuantityMeasurementService {
 
-    /**
-     * Compares two quantities of the same measurement type.
-     *
-     * @return true if the quantities are equal (within tolerance)
-     */
-    boolean compare(QuantityDTO dto);
+    QuantityMeasurementDTO compare(QuantityInputDTO input);
 
-    /**
-     * Adds two quantities and returns the result in the base unit.
-     */
-    double add(QuantityDTO dto);
+    QuantityMeasurementDTO convert(QuantityInputDTO input);
 
-    /**
-     * Converts a single quantity to its equivalent in the base unit.
-     */
-    double convert(QuantityDTO dto);
+    QuantityMeasurementDTO add(QuantityInputDTO input);
 
-    /**
-     * Returns all measurement operations stored in the repository.
-     */
-    List<QuantityMeasurementEntity> getAllMeasurements();
+    QuantityMeasurementDTO subtract(QuantityInputDTO input);
 
-    /**
-     * Returns measurements filtered by operation type.
-     */
-    List<QuantityMeasurementEntity> getMeasurementsByOperation(String operationType);
+    QuantityMeasurementDTO multiply(QuantityInputDTO input);
 
-    /**
-     * Returns measurements filtered by measurement category.
-     */
-    List<QuantityMeasurementEntity> getMeasurementsByType(String measurementType);
+    QuantityMeasurementDTO divide(QuantityInputDTO input);
 
-    /**
-     * Returns the total count of stored measurements.
-     */
-    int getTotalCount();
+    List<QuantityMeasurementDTO> getHistoryByOperation(String operation);
 
-    /**
-     * Deletes all measurements from the repository.
-     */
-    void deleteAllMeasurements();
+    List<QuantityMeasurementDTO> getHistoryByType(String measurementType);
 
-    /**
-     * Returns pool or cache statistics from the underlying repository.
-     */
-    String getRepositoryStatistics();
+    List<QuantityMeasurementDTO> getErrorHistory();
+
+    long countByOperation(String operation);
 }

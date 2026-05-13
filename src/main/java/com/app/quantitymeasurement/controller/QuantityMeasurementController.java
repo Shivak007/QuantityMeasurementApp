@@ -1,85 +1,132 @@
 package com.app.quantitymeasurement.controller;
 
-import com.app.quantitymeasurement.entity.QuantityDTO;
-import com.app.quantitymeasurement.entity.QuantityMeasurementEntity;
+import com.app.quantitymeasurement.model.QuantityInputDTO;
+import com.app.quantitymeasurement.model.QuantityMeasurementDTO;
 import com.app.quantitymeasurement.service.IQuantityMeasurementService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 /**
- * QuantityMeasurementController - Thin controller that bridges client
- * requests to the service layer. Contains no business logic.
- *
- * UC16: Updated imports for new package structure + SLF4J logging.
+ * QuantityMeasurementController - REST controller for all quantity measurement operations.
+ * UC17: Full Spring Boot REST migration with Swagger docs.
  */
+@Slf4j
+@RestController
+@RequestMapping("/api/v1/quantities")
+@RequiredArgsConstructor
+@Tag(name = "Quantity Measurement", description = "REST API for quantity comparison, conversion, and arithmetic")
 public class QuantityMeasurementController {
-
-    private static final Logger logger = LoggerFactory.getLogger(QuantityMeasurementController.class);
 
     private final IQuantityMeasurementService service;
 
-    public QuantityMeasurementController(IQuantityMeasurementService service) {
-        this.service = service;
-        logger.info("QuantityMeasurementController: Initialised.");
-    }
-
     // ---- Operations ----
 
-    public boolean compare(double firstValue, String firstUnit,
-                           double secondValue, String secondUnit,
-                           String measurementType) {
-        logger.debug("Controller.compare: {} {} vs {} {} [{}]",
-            firstValue, firstUnit, secondValue, secondUnit, measurementType);
-        QuantityDTO dto = new QuantityDTO(firstValue, firstUnit,
-                                          secondValue, secondUnit,
-                                          "COMPARE", measurementType);
-        return service.compare(dto);
+    @PostMapping("/compare")
+    @Operation(summary = "Compare two quantities", description = "Returns true if two quantities of the same type are equal within tolerance")
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "Comparison result returned"),
+        @ApiResponse(responseCode = "400", description = "Validation or business logic error")
+    })
+    public ResponseEntity<QuantityMeasurementDTO> compare(@Valid @RequestBody QuantityInputDTO input) {
+        log.debug("REST POST /compare");
+        return ResponseEntity.ok(service.compare(input));
     }
 
-    public double add(double firstValue, String firstUnit,
-                      double secondValue, String secondUnit,
-                      String measurementType) {
-        logger.debug("Controller.add: {} {} + {} {} [{}]",
-            firstValue, firstUnit, secondValue, secondUnit, measurementType);
-        QuantityDTO dto = new QuantityDTO(firstValue, firstUnit,
-                                          secondValue, secondUnit,
-                                          "ADD", measurementType);
-        return service.add(dto);
+    @PostMapping("/convert")
+    @Operation(summary = "Convert a quantity to its base unit")
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "Conversion result returned"),
+        @ApiResponse(responseCode = "400", description = "Validation or business logic error")
+    })
+    public ResponseEntity<QuantityMeasurementDTO> convert(@Valid @RequestBody QuantityInputDTO input) {
+        log.debug("REST POST /convert");
+        return ResponseEntity.ok(service.convert(input));
     }
 
-    public double convert(double value, String fromUnit, String measurementType) {
-        logger.debug("Controller.convert: {} {} -> base [{}]", value, fromUnit, measurementType);
-        QuantityDTO dto = new QuantityDTO(value, fromUnit,
-                                          0.0, fromUnit,
-                                          "CONVERT", measurementType);
-        return service.convert(dto);
+    @PostMapping("/add")
+    @Operation(summary = "Add two quantities", description = "Returns the sum in the base unit")
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "Addition result returned"),
+        @ApiResponse(responseCode = "400", description = "Validation or business logic error")
+    })
+    public ResponseEntity<QuantityMeasurementDTO> add(@Valid @RequestBody QuantityInputDTO input) {
+        log.debug("REST POST /add");
+        return ResponseEntity.ok(service.add(input));
     }
 
-    // ---- Query methods (UC16) ----
-
-    public List<QuantityMeasurementEntity> getAllMeasurements() {
-        return service.getAllMeasurements();
+    @PostMapping("/subtract")
+    @Operation(summary = "Subtract two quantities", description = "Returns thisQuantity minus thatQuantity in the base unit")
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "Subtraction result returned"),
+        @ApiResponse(responseCode = "400", description = "Validation or business logic error")
+    })
+    public ResponseEntity<QuantityMeasurementDTO> subtract(@Valid @RequestBody QuantityInputDTO input) {
+        log.debug("REST POST /subtract");
+        return ResponseEntity.ok(service.subtract(input));
     }
 
-    public List<QuantityMeasurementEntity> getMeasurementsByOperation(String operationType) {
-        return service.getMeasurementsByOperation(operationType);
+    @PostMapping("/multiply")
+    @Operation(summary = "Multiply two quantities")
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "Multiplication result returned"),
+        @ApiResponse(responseCode = "400", description = "Validation or business logic error")
+    })
+    public ResponseEntity<QuantityMeasurementDTO> multiply(@Valid @RequestBody QuantityInputDTO input) {
+        log.debug("REST POST /multiply");
+        return ResponseEntity.ok(service.multiply(input));
     }
 
-    public List<QuantityMeasurementEntity> getMeasurementsByType(String measurementType) {
-        return service.getMeasurementsByType(measurementType);
+    @PostMapping("/divide")
+    @Operation(summary = "Divide two quantities")
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "Division result returned"),
+        @ApiResponse(responseCode = "400", description = "Validation or business logic error"),
+        @ApiResponse(responseCode = "500", description = "Division by zero")
+    })
+    public ResponseEntity<QuantityMeasurementDTO> divide(@Valid @RequestBody QuantityInputDTO input) {
+        log.debug("REST POST /divide");
+        return ResponseEntity.ok(service.divide(input));
     }
 
-    public int getTotalCount() {
-        return service.getTotalCount();
+    // ---- History / Query ----
+
+    @GetMapping("/history/operation/{operation}")
+    @Operation(summary = "Get operation history by type")
+    public ResponseEntity<List<QuantityMeasurementDTO>> getHistoryByOperation(
+            @Parameter(description = "Operation type: COMPARE, CONVERT, ADD, SUBTRACT, MULTIPLY, DIVIDE")
+            @PathVariable String operation) {
+        return ResponseEntity.ok(service.getHistoryByOperation(operation));
     }
 
-    public void deleteAllMeasurements() {
-        service.deleteAllMeasurements();
+    @GetMapping("/history/type/{measurementType}")
+    @Operation(summary = "Get operation history by measurement category")
+    public ResponseEntity<List<QuantityMeasurementDTO>> getHistoryByType(
+            @Parameter(description = "Measurement type: LENGTH, WEIGHT, VOLUME, TEMPERATURE")
+            @PathVariable String measurementType) {
+        return ResponseEntity.ok(service.getHistoryByType(measurementType));
     }
 
-    public String getRepositoryStatistics() {
-        return service.getRepositoryStatistics();
+    @GetMapping("/history/errored")
+    @Operation(summary = "Get all errored operations")
+    public ResponseEntity<List<QuantityMeasurementDTO>> getErrorHistory() {
+        return ResponseEntity.ok(service.getErrorHistory());
+    }
+
+    @GetMapping("/count/{operation}")
+    @Operation(summary = "Count successful operations by type")
+    public ResponseEntity<Long> countByOperation(
+            @Parameter(description = "Operation type to count")
+            @PathVariable String operation) {
+        return ResponseEntity.ok(service.countByOperation(operation));
     }
 }
